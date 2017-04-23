@@ -1,5 +1,7 @@
 package support
 
+import "time"
+
 type Location struct {
 	ID           int64  `json:"-" orm:"column(id);pk;auto"`
 	LID          string `json:"id,omitempty" orm:"column(locid)"`
@@ -9,6 +11,10 @@ type Location struct {
 	Introduction string `json:"introduction,omitempty" orm:"column(introduction);type(text)"`
 	Type         string `json:"type,omitempty" orm:"column(type)"`
 	Excerpt      string `json:"excerpt,omitempty" orm:"column(excerpt);type(text)"`
+
+	Deleted bool      `json:"deleted,omitempty"`
+	Created time.Time `json:"created"  orm:"auto_now_add;type(datetime)"`
+	Updated time.Time `json:"updated" orm:"auto_now;type(datetime)"`
 }
 
 type Career struct {
@@ -25,6 +31,10 @@ type Company struct {
 	Introduction string `json:"introduction,omitempty" orm:"column(introduction);type(text)"`
 	Type         string `json:"type,omitempty" orm:"column(type)"`
 	Excerpt      string `json:"excerpt,omitempty" orm:"column(excerpt);type(text)"`
+
+	Deleted bool      `json:"deleted,omitempty"`
+	Created time.Time `json:"created"  orm:"auto_now_add;type(datetime)"`
+	Updated time.Time `json:"updated" orm:"auto_now;type(datetime)"`
 }
 
 type Job struct {
@@ -36,4 +46,8 @@ type Job struct {
 	Introduction string `json:"introduction,omitempty" orm:"column(introduction);type(text)"`
 	Type         string `json:"type,omitempty" orm:"column(type)"`
 	Excerpt      string `json:"excerpt,omitempty" orm:"column(excerpt);type(text)"`
+
+	Deleted bool      `json:"deleted,omitempty"`
+	Created time.Time `json:"created"  orm:"auto_now_add;type(datetime)"`
+	Updated time.Time `json:"updated" orm:"auto_now;type(datetime)"`
 }

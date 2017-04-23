@@ -3,6 +3,9 @@ package auth
 import (
 	"errors"
 
+	"time"
+
+	"github.com/FlyCynomys/tools/randomstring"
 	"github.com/astaxie/beego/orm"
 )
 
@@ -20,10 +23,22 @@ type Auth struct {
 	Email    string `json:"email,omitempty"`
 	Phone    string `json:"phone,omitempty"`
 	Salt     string `json:"salt,omitempty"`
+
+	Deleted bool `json:"deleted,omitempty"`
+
+	Created time.Time `json:"created"  orm:"auto_now_add;type(datetime)"`
+	Updated time.Time `json:"updated" orm:"auto_now;type(datetime)"`
+}
+
+func NewAuth() *Auth {
+	return &Auth{
+		Salt:    string(randomstring.RandomString()),
+		Deleted: false,
+	}
 }
 
 func (a *Auth) Insert() (bool, error) {
-	err := o.Read(a, "email")
+	err := o.Read(a, "email", "deleted")
 	if err == orm.ErrNoRows {
 		a.Password = EncodePassword(a.Password, a.Salt)
 		_, err = o.Insert(a)
@@ -38,7 +53,7 @@ func (a *Auth) Insert() (bool, error) {
 func (a *Auth) Get() (bool, error) {
 	password := a.Password
 
-	err := o.Read(a, "email")
+	err := o.Read(a, "email", "deleted")
 	if err == orm.ErrNoRows {
 		return false, errors.New("user not exist")
 	}

@@ -12,7 +12,7 @@ var o = orm.NewOrm()
 
 type User struct {
 	ID          int64  `json:"id,omitempty"`
-	UID         string `json:"uid,omitempty"`
+	UID         int64  `json:"uid,omitempty"`
 	UrlToken    string `json:"url_token,omitempty"`
 	NickName    string `json:"nick_name,omitempty"`
 	UserType    string `json:"user_type,omitempty"`
@@ -95,7 +95,7 @@ func (u *User) Update(colms ...string) (bool, error) {
 	return true, nil
 }
 
-func (u *User) DeleteUser() (bool, error) {
+func (u *User) Delete() (bool, error) {
 	err := o.Read(u, "uid", "deleted")
 	if err == orm.ErrNoRows {
 		return true, nil

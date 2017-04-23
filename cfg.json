@@ -1,0 +1,8 @@
+{
+    "dbaddress":"tcp(localhost:3306)/fork",
+    "dbpassword":"123456",
+    "dbuser":"root",
+    "redis":false,
+    "redisaddress":"localhost:6379",
+    "port":"localhost:9000"
+}

@@ -92,18 +92,10 @@ func (t *TodoPlan) GetTodoPlanByCondition(condition string) (bool, error) {
 	return true, nil
 }
 
-func GetTodoPlanByLocation() []*TodoPlan {
-	return nil
+func GetTodoPlanByCondition() ([]*TodoPlan, error) {
+	return nil, nil
 }
 
-func GetTodoPlanByJob() []*TodoPlan {
-	return nil
-}
-
-func GetTodoPlanByCompany() []*TodoPlan {
-	return nil
-}
-
-func GetTodoPlanByNmae() []*TodoPlan {
-	return nil
+func DeleteTodoPlanByCondition(query string) (bool, error) {
+	return true, nil
 }

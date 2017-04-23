@@ -115,18 +115,22 @@ func (u *User) GetByCondition(condition string) (bool, error) {
 	return true, nil
 }
 
-func GetUserByLocation() []*User {
-	return nil
+func GetUserByLocation(query string) ([]*User, error) {
+	return nil, nil
 }
 
-func GetUserByJob() []*User {
-	return nil
+func GetUserByJob(query string) ([]*User, error) {
+	return nil, nil
 }
 
-func GetUserByCompany() []*User {
-	return nil
+func GetUserByCompany(query string) ([]*User, error) {
+	return nil, nil
 }
 
-func GetUserByNmae() []*User {
-	return nil
+func GetUserByNmae(query string) ([]*User, error) {
+	return nil, nil
+}
+
+func DeleteUserByCondition(query string) (bool, error) {
+	return true, nil
 }

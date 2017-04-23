@@ -1,8 +1,13 @@
 package user
 
 import (
+	"errors"
+
 	"github.com/FlyCynomys/gear/models/support"
+	"github.com/astaxie/beego/orm"
 )
+
+var o = orm.NewOrm()
 
 type User struct {
 	ID          int64  `json:"id,omitempty"`
@@ -20,14 +25,14 @@ type User struct {
 	ShowSinaWeibo bool `json:"show_sina_weibo,omitempty"`
 	IsBindSina    bool `json:"is_bind_sina,omitempty"`
 
-	ThankFromCount    int    `json:"thank_from_count,omitempty"`
-	ThankToCount      int    `json:"thank_to_count,omitempty"`
-	QuestionCount     int    `json:"question_count,omitempty"`
-	FollowingCount    int    `json:"following_count,omitempty"`
-	VoteStarFromCount int    `json:"vote_star_from_count,omitempty"`
-	VoteStarToCount   int    `json:"vote_star_to_count,omitempty"`
-	FavoriteCount     int    `json:"favorite_count,omitempty"`
-	Headline          string `json:"headline,omitempty"`
+	ThankFromCount    int `json:"thank_from_count,omitempty"`
+	ThankToCount      int `json:"thank_to_count,omitempty"`
+	QuestionCount     int `json:"question_count,omitempty"`
+	FollowingCount    int `json:"following_count,omitempty"`
+	VoteStarFromCount int `json:"vote_star_from_count,omitempty"`
+	VoteStarToCount   int `json:"vote_star_to_count,omitempty"`
+
+	Headline string `json:"headline,omitempty"`
 
 	ToDoPlanCount        int `json:"to_do_plan_count,omitempty"`
 	FailedToDoPlanCount  int `json:"failed_to_do_plan_count,omitempty"`
@@ -35,4 +40,19 @@ type User struct {
 
 	Loc         []*support.Location `json:"loc,omitempty"`
 	Employments []*support.Career   `json:"employments,omitempty"`
+}
+
+func (u *User) Insert() (bool, error) {
+	if u == nil {
+		return false, errors.New("empty object")
+	}
+	err := o.Read(u, "uid")
+	if err == orm.ErrNoRows {
+		_, err := o.Insert(u)
+		if err != nil {
+			return false, err
+		}
+		return true, nil
+	}
+	return true, nil
 }

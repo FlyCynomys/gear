@@ -8,6 +8,7 @@ import (
 	"flag"
 
 	"github.com/FlyCynomys/gear/conf"
+	"github.com/FlyCynomys/gear/handles"
 	"github.com/FlyCynomys/tools/log"
 )
 
@@ -18,6 +19,8 @@ func Init() {
 	log.Info("start server")
 	log.Info(*cfgpath)
 	conf.Init(*cfgpath)
+	handles.Init("9000")
+
 }
 
 func main() {

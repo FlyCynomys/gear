@@ -12,21 +12,21 @@ func Init(port string) {
 	{
 		loginRoute := rootRouter.Group("")
 		{
-			loginRoute.GET("/login", nil)
-			loginRoute.POST("/login", nil)
+			loginRoute.GET("/login", HandLoginGet)
+			loginRoute.POST("/login", HandLoginPost)
 		}
-		rootRouter.POST("/logout", nil)
+		rootRouter.POST("/logout", HandLogoutGet)
 
-		rootRouter.POST("/intro", nil)
-		rootRouter.POST("/about", nil)
+		rootRouter.GET("/intro", HandIntro)
+		rootRouter.GET("/about", HandAbout)
 	}
 	exploreRoute := rootRouter.Group("explore")
 	{
-		exploreRoute.GET("plan", nil)
-		exploreRoute.GET("active", nil)
+		exploreRoute.GET("/plan", HandleExplorePlan)
+		exploreRoute.GET("/active", HandleExploreActive)
 	}
 
-	planRoute := rootRouter.Group("todos")
+	planRoute := rootRouter.Group("todos/:id")
 	planRoute.Use(gin.BasicAuth(gin.Accounts{
 		"root": "123456",
 	}))
@@ -94,7 +94,7 @@ func Init(port string) {
 		}))
 	}
 
-	userRoute := rootRouter.Group("people")
+	userRoute := rootRouter.Group("people/:id")
 	userRoute.Use(gin.BasicAuth(gin.Accounts{
 		"root": "123456",
 	}))
@@ -117,7 +117,7 @@ func Init(port string) {
 		}
 	}
 
-	groupRoute := rootRouter.Group("group")
+	groupRoute := rootRouter.Group("group/:id")
 	groupRoute.Use(gin.BasicAuth(gin.Accounts{
 		"root": "123456",
 	}))

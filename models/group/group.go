@@ -9,6 +9,11 @@ import (
 
 var o orm.Ormer
 
+func Init() {
+	o = orm.NewOrm()
+	o.Using("default")
+}
+
 type Group struct {
 	ID          int64
 	GID         int64

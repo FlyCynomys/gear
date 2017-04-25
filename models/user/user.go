@@ -10,6 +10,11 @@ import (
 
 var o = orm.NewOrm()
 
+func Init() {
+	o = orm.NewOrm()
+	o.Using("default")
+}
+
 type User struct {
 	ID          int64  `json:"id,omitempty"`
 	UID         int64  `json:"uid,omitempty"`

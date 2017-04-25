@@ -13,6 +13,7 @@ var o orm.Ormer
 
 func Init() {
 	o = orm.NewOrm()
+	o.Using("default")
 }
 
 type Auth struct {

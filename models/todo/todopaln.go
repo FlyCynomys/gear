@@ -9,6 +9,11 @@ import (
 
 var o = orm.NewOrm()
 
+func Init() {
+	o = orm.NewOrm()
+	o.Using("default")
+}
+
 type TodoPlan struct {
 	ID          int64  `json:"id,omitempty"`
 	TID         int64  `json:"tid,omitempty"`

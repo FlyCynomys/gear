@@ -33,6 +33,12 @@ type Auth struct {
 
 func NewAuth() *Auth {
 	return &Auth{
+		Deleted: false,
+	}
+}
+
+func NewAuthWithSalt() *Auth {
+	return &Auth{
 		Salt:    string(randomstring.RandomString()),
 		Deleted: false,
 	}
@@ -62,6 +68,14 @@ func (a *Auth) Get() (bool, error) {
 	if password != temp {
 		return false, errors.New("auth failed")
 	}
+	return true, nil
+}
+
+func (a *Auth) Update() (bool, error) {
+	return true, nil
+}
+
+func (a *Auth) Delete() (bool, error) {
 	return true, nil
 }
 

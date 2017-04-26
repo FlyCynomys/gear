@@ -1,10 +1,9 @@
 package auth
 
 import (
-	"errors"
-
 	"time"
 
+	Err "github.com/FlyCynomys/tools/err"
 	"github.com/FlyCynomys/tools/randomstring"
 	"github.com/astaxie/beego/orm"
 )
@@ -44,38 +43,48 @@ func NewAuthWithSalt() *Auth {
 	}
 }
 
-func (a *Auth) Insert() (bool, error) {
+func (a *Auth) Insert() (bool, *Err.ErrorCode) {
 	err := o.Read(a, "email", "deleted")
 	if err == orm.ErrNoRows {
 		a.Password = EncodePassword(a.Password, a.Salt)
 		_, err = o.Insert(a)
 		if err != nil {
-			return false, err
+			return false, Err.New(-1, err.Error())
 		}
 		return true, nil
 	}
-	return false, errors.New("user exist")
+	return false, Err.New(-1, "user is exist")
 }
 
-func (a *Auth) Get() (bool, error) {
+func (a *Auth) Get() (bool, *Err.ErrorCode) {
 	password := a.Password
-
 	err := o.Read(a, "email", "deleted")
 	if err == orm.ErrNoRows {
-		return false, errors.New("user not exist")
+		return false, Err.New(-1, "user not exist")
 	}
 	temp := DecodePassword(a.Password, a.Salt)
 	if password != temp {
-		return false, errors.New("auth failed")
+		return false, Err.New(-1, "password not right")
 	}
 	return true, nil
 }
 
-func (a *Auth) Update() (bool, error) {
+func (a *Auth) Update() (bool, *Err.ErrorCode) {
+	_, err := o.Update(a, "auto_now")
+	if err != nil {
+		return false, Err.New(-1, "user update failed")
+	}
 	return true, nil
 }
 
-func (a *Auth) Delete() (bool, error) {
+func (a *Auth) Delete() (bool, *Err.ErrorCode) {
+	_, err := o.Update(a, "aid", "deleted")
+	if err != nil {
+		if err == orm.ErrNoRows {
+			return false, Err.New(-1, "user not exist")
+		}
+		return false, Err.New(-1, "user delete failed")
+	}
 	return true, nil
 }
 

@@ -5,6 +5,12 @@ import (
 	"github.com/FlyCynomys/tools/format"
 )
 
+const (
+	ErrorUserNotExist  = 400001
+	ErrorPasswordError = 400002
+	ErrorUserHasExist  = 400003
+)
+
 type AuthService struct {
 }
 

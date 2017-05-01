@@ -5,7 +5,9 @@ import (
 )
 
 const (
-	forkcookie = "forkcookie"
+	forkcookie  = "forkcookie"
+	_auth_token = "auth_token"
+	_ref_code   = "ref_code"
 )
 
 func Init(port string) {
@@ -100,7 +102,7 @@ func Init(port string) {
 		}))
 	}
 
-	userRoute := rootRouter.Group("people/:id")
+	userRoute := rootRouter.Group("people/:userid")
 	{
 		userRoute.GET("", HandleUserGet)
 		userRoute.GET("/info", nil)
@@ -121,7 +123,7 @@ func Init(port string) {
 		}
 	}
 
-	groupRoute := rootRouter.Group("group/:id")
+	groupRoute := rootRouter.Group("group/:groupid")
 	groupRoute.Use(gin.BasicAuth(gin.Accounts{
 		"root": "123456",
 	}))
@@ -142,6 +144,22 @@ func Init(port string) {
 			todosRoute.PUT("", nil)
 			todosRoute.DELETE("", nil)
 		}
+	}
+
+	activeRoute := rootRouter.Group("active/:activeid")
+	activeRoute.Use(gin.BasicAuth(gin.Accounts{
+		"root": "123456",
+	}))
+	{
+		activeRoute.GET("/info", nil)
+
+		detailRoute := activeRoute.Group("detail")
+		{
+			detailRoute.GET("", nil)
+			detailRoute.POST("", nil)
+			detailRoute.PUT("", nil)
+		}
+
 	}
 
 	app.Run(":" + port)

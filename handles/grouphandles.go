@@ -5,5 +5,5 @@ import (
 )
 
 func HandleGroup(c *gin.Context) {
-	c.Writer.WriteString("org")
+	c.Writer.WriteString("group")
 }

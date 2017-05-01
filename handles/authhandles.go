@@ -45,7 +45,7 @@ func HandleLogoutGet(c *gin.Context) {
 		return
 	}
 	log.Debug(data)
-	//todo : delete cookie
+	//todo : delete cookie & delete sessions
 }
 
 func HandleRegisterGet(c *gin.Context) {

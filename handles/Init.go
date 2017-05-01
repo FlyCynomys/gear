@@ -4,6 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	forkcookie = "forkcookie"
+)
+
 func Init(port string) {
 	app := gin.New()
 	app.Use(gin.Logger())
@@ -12,13 +16,15 @@ func Init(port string) {
 	{
 		loginRoute := rootRouter.Group("")
 		{
-			loginRoute.GET("/login", HandLoginGet)
-			loginRoute.POST("/login", HandLoginPost)
+			loginRoute.GET("/login", HandleLoginGet)
+			loginRoute.POST("/login", HandleLoginPost)
+			loginRoute.GET("/register", HandleRegisterGet)
+			loginRoute.POST("/register", HandleRegisterPost)
 		}
-		rootRouter.POST("/logout", HandLogoutGet)
+		rootRouter.POST("/logout", HandleLogoutGet)
 
-		rootRouter.GET("/intro", HandIntro)
-		rootRouter.GET("/about", HandAbout)
+		rootRouter.GET("/intro", HandleIntro)
+		rootRouter.GET("/about", HandleAbout)
 	}
 	exploreRoute := rootRouter.Group("explore")
 	{
@@ -95,10 +101,8 @@ func Init(port string) {
 	}
 
 	userRoute := rootRouter.Group("people/:id")
-	userRoute.Use(gin.BasicAuth(gin.Accounts{
-		"root": "123456",
-	}))
 	{
+		userRoute.GET("", HandleUserGet)
 		userRoute.GET("/info", nil)
 
 		detailRoute := userRoute.Group("detail")

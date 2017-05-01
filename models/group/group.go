@@ -7,21 +7,14 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-var o orm.Ormer
-
-func Init() {
-	o = orm.NewOrm()
-	o.Using("default")
-}
-
 type Group struct {
-	ID          int64
-	GID         int64
-	NickName    string
-	Headline    string
-	Description string
+	ID          int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
+	GID         int64  `json:"gid,omitempty" orm:"column(gid)"`
+	NickName    string `json:"nick_name,omitempty" orm:"column(nick_name)"`
+	Headline    string `json:"headline,omitempty" orm:"column(headline)"`
+	Description string `json:"description,omitempty" orm:"column(description)"`
 
-	Deleted bool `json:"deleted,omitempty"`
+	Deleted bool `json:"deleted,omitempty" orm:"column(deleted)"`
 
 	Created time.Time `json:"created"  orm:"auto_now_add;type(datetime)"`
 	Updated time.Time `json:"updated" orm:"auto_now;type(datetime)"`
@@ -34,6 +27,7 @@ func NewGroup() *Group {
 }
 
 func (g *Group) Insert() (bool, error) {
+	o := orm.NewOrm()
 	err := o.Read(g, "gid")
 	if err == orm.ErrNoRows {
 		_, err = o.Insert(g)
@@ -49,6 +43,7 @@ func (g *Group) Insert() (bool, error) {
 }
 
 func (g *Group) Get() (bool, error) {
+	o := orm.NewOrm()
 	err := o.Read(g, "gid")
 	if err != nil {
 		if err == orm.ErrNoRows {
@@ -63,6 +58,7 @@ func (g *Group) Update(colms ...string) (bool, error) {
 	if len(colms) <= 0 {
 		return true, nil
 	}
+	o := orm.NewOrm()
 	temp := NewGroup()
 	temp.GID = g.GID
 	err := o.Read(temp, "gid", "deleted")
@@ -80,6 +76,7 @@ func (g *Group) Update(colms ...string) (bool, error) {
 }
 
 func (g *Group) Delete() (bool, error) {
+	o := orm.NewOrm()
 	_, err := o.Update(g, "gid", "deleted")
 	if err != nil {
 		if err == orm.ErrNoRows {
@@ -91,6 +88,7 @@ func (g *Group) Delete() (bool, error) {
 }
 
 func (g *Group) GetGroupByCondition(condition string) (bool, error) {
+	o := orm.NewOrm()
 	err := o.Read(g, condition, "deleted")
 	if err == orm.ErrNoRows {
 		return false, errors.New("group not exist")

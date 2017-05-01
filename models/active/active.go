@@ -15,13 +15,13 @@ func Init() {
 }
 
 type Active struct {
-	ID          int64
-	AID         int64
-	Topic       string
-	Headline    string
-	Description string
+	ID          int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
+	AID         int64  `json:"aid,omitempty" orm:"column(aid)"`
+	Topic       string `json:"topic,omitempty" orm:"column(topic)"`
+	Headline    string `json:"headline,omitempty" orm:"column(headline)"`
+	Description string `json:"description,omitempty" orm:"column(descriptions)"`
 
-	Deleted bool `json:"deleted,omitempty"`
+	Deleted bool `json:"deleted,omitempty" orm:"column(deleted)"`
 
 	Created time.Time `json:"created"  orm:"auto_now_add;type(datetime)"`
 	Updated time.Time `json:"updated" orm:"auto_now;type(datetime)"`

@@ -4,10 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func HandIntro(c *gin.Context) {
-
+func HandleIntro(c *gin.Context) {
+	c.Writer.WriteString("intro")
+	return
 }
 
-func HandAbout(c *gin.Context) {
-
+func HandleAbout(c *gin.Context) {
+	c.Writer.WriteString("about")
+	return
 }

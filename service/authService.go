@@ -26,7 +26,7 @@ func (a *AuthService) Login(account string, password string) *Result {
 		re.Description = err.Error()
 	} else {
 		re.Status = 1
-		re.Data = au
+		re.Data = au.UID
 		re.Description = "ok"
 	}
 	return re
@@ -68,7 +68,7 @@ func (a *AuthService) Register(account, password, nickname string) *Result {
 		re.Description = err.Error()
 	} else {
 		re.Status = 1
-		re.Data = au
+		re.Data = au.UID
 		re.Description = "ok"
 	}
 	return re

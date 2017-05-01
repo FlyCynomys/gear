@@ -3,26 +3,22 @@ package auth
 import (
 	"time"
 
+	ErrCode "github.com/FlyCynomys/error"
 	Err "github.com/FlyCynomys/tools/err"
 	"github.com/FlyCynomys/tools/randomstring"
+	"github.com/FlyCynomys/tools/uuid"
 	"github.com/astaxie/beego/orm"
 )
 
-var o orm.Ormer
-
-func Init() {
-	o = orm.NewOrm()
-	o.Using("default")
-}
+var IdGenerator, _ = uuid.NewIdWorker(1)
 
 type Auth struct {
-	ID       string `json:"id,omitempty"`
-	UID      string `json:"uid,omitempty"`
-	UrlToken string `json:"url_token,omitempty"`
-	Password string `json:"password,omitempty"`
-	Email    string `json:"email,omitempty"`
-	Phone    string `json:"phone,omitempty"`
-	Salt     string `json:"salt,omitempty"`
+	ID       int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
+	UID      int64  `json:"uid,omitempty" orm:"column(uid)"`
+	UrlToken string `json:"url_token,omitempty" orm:"column(url_token)"`
+	Password string `json:"password,omitempty" orm:"column(password)"`
+	Email    string `json:"email,omitempty" orm:"column(email)"`
+	Salt     string `json:"salt,omitempty" orm:"column(salt)"`
 
 	Deleted bool `json:"deleted,omitempty"`
 
@@ -44,46 +40,82 @@ func NewAuthWithSalt() *Auth {
 }
 
 func (a *Auth) Insert() (bool, *Err.ErrorCode) {
+	o := orm.NewOrm()
 	err := o.Read(a, "email", "deleted")
 	if err == orm.ErrNoRows {
 		a.Password = EncodePassword(a.Password, a.Salt)
+		a.UID, err = IdGenerator.NextId()
+		if err != nil {
+			return false, Err.New(-1, err.Error())
+		}
 		_, err = o.Insert(a)
 		if err != nil {
 			return false, Err.New(-1, err.Error())
 		}
 		return true, nil
 	}
-	return false, Err.New(-1, "user is exist")
+	return false, ErrCode.ErrorAuthInfoHasExist
 }
 
 func (a *Auth) Get() (bool, *Err.ErrorCode) {
+	o := orm.NewOrm()
 	password := a.Password
 	err := o.Read(a, "email", "deleted")
 	if err == orm.ErrNoRows {
-		return false, Err.New(-1, "user not exist")
+		return false, ErrCode.ErrorUserNotExist
 	}
 	temp := DecodePassword(a.Password, a.Salt)
 	if password != temp {
-		return false, Err.New(-1, "password not right")
+		return false, ErrCode.ErrorAuthPasswordNotMatch
+	}
+	return true, nil
+}
+
+func (a *Auth) GetByAccount(email string) (bool, *Err.ErrorCode) {
+	o := orm.NewOrm()
+	password := a.Password
+	err := o.Read(a, "email", "deleted")
+	if err == orm.ErrNoRows {
+		return false, ErrCode.ErrorUserNotExist
+	}
+	temp := DecodePassword(a.Password, a.Salt)
+	if password != temp {
+		return false, ErrCode.ErrorAuthPasswordNotMatch
+	}
+	return true, nil
+}
+
+func (a *Auth) GetByUid() (bool, *Err.ErrorCode) {
+	o := orm.NewOrm()
+	password := a.Password
+	err := o.Read(a, "uid", "deleted")
+	if err == orm.ErrNoRows {
+		return false, ErrCode.ErrorUserNotExist
+	}
+	temp := DecodePassword(a.Password, a.Salt)
+	if password != temp {
+		return false, ErrCode.ErrorAuthPasswordNotMatch
 	}
 	return true, nil
 }
 
 func (a *Auth) Update() (bool, *Err.ErrorCode) {
+	o := orm.NewOrm()
 	_, err := o.Update(a, "auto_now")
 	if err != nil {
-		return false, Err.New(-1, "user update failed")
+		return false, ErrCode.ErrorAuthInfoUpdateFailed
 	}
 	return true, nil
 }
 
 func (a *Auth) Delete() (bool, *Err.ErrorCode) {
-	_, err := o.Update(a, "aid", "deleted")
+	o := orm.NewOrm()
+	_, err := o.Update(a, "uid", "deleted")
 	if err != nil {
 		if err == orm.ErrNoRows {
-			return false, Err.New(-1, "user not exist")
+			return false, ErrCode.ErrorAuthInfoUpdateFailed
 		}
-		return false, Err.New(-1, "user delete failed")
+		return false, ErrCode.ErrorAuthInfoDeleteFailed
 	}
 	return true, nil
 }

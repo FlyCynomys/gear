@@ -8,47 +8,40 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-var o = orm.NewOrm()
-
-func Init() {
-	o = orm.NewOrm()
-	o.Using("default")
-}
-
 type User struct {
-	ID          int64  `json:"id,omitempty"`
-	UID         int64  `json:"uid,omitempty"`
-	UrlToken    string `json:"url_token,omitempty"`
-	NickName    string `json:"nick_name,omitempty"`
-	UserType    string `json:"user_type,omitempty"`
-	Gender      int    `json:"gender,omitempty"`
-	RealName    string `json:"real_name,omitempty"`
-	AvatarUrl   string `json:"avatar_url,omitempty"`
-	IsOrg       bool   `json:"is_org,omitempty"`
-	Description string `json:"description,omitempty"`
-	CoverUrl    string `json:"cover_url,omitempty"`
-	Email       string `json:"email,omitempty"`
+	ID          int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
+	UID         int64  `json:"uid,omitempty" orm:"column(uid)"`
+	UrlToken    string `json:"url_token,omitempty" orm:"column(url_token)"`
+	NickName    string `json:"nick_name,omitempty" orm:"column(nick_name)"`
+	UserType    string `json:"user_type,omitempty" orm:"column(user_type)"`
+	Gender      int    `json:"gender,omitempty" orm:"column(gender)"`
+	RealName    string `json:"real_name,omitempty" orm:"column(real_name)"`
+	AvatarUrl   string `json:"avatar_url,omitempty" orm:"column(avatar_url)"`
+	IsOrg       bool   `json:"is_org,omitempty" orm:"column(is_org)"`
+	Description string `json:"description,omitempty" orm:"column(description)"`
+	CoverUrl    string `json:"cover_url,omitempty" orm:"column(cover_url)"`
+	Email       string `json:"email,omitempty" orm:"column(email)"`
 
-	ShowSinaWeibo bool `json:"show_sina_weibo,omitempty"`
-	IsBindSina    bool `json:"is_bind_sina,omitempty"`
+	ShowSinaWeibo bool `json:"show_sina_weibo,omitempty" orm:"column(show_sina_weibo)"`
+	IsBindSina    bool `json:"is_bind_sina,omitempty" orm:"column(is_bind_sina)"`
 
-	ThankFromCount    int `json:"thank_from_count,omitempty"`
-	ThankToCount      int `json:"thank_to_count,omitempty"`
-	QuestionCount     int `json:"question_count,omitempty"`
-	FollowingCount    int `json:"following_count,omitempty"`
-	VoteStarFromCount int `json:"vote_star_from_count,omitempty"`
-	VoteStarToCount   int `json:"vote_star_to_count,omitempty"`
+	ThankFromCount    int `json:"thank_from_count,omitempty" orm:"column(thank_from_count)"`
+	ThankToCount      int `json:"thank_to_count,omitempty" orm:"column(thank_to_count)"`
+	QuestionCount     int `json:"question_count,omitempty" orm:"column(question_count)"`
+	FollowingCount    int `json:"following_count,omitempty" orm:"column(following_count)"`
+	VoteStarFromCount int `json:"vote_star_from_count,omitempty" orm:"column(vote_star_from_count)"`
+	VoteStarToCount   int `json:"vote_star_to_count,omitempty" orm:"column(vote_star_to_count)"`
 
-	Headline string `json:"headline,omitempty"`
+	Headline string `json:"headline,omitempty" orm:"column(headline)"`
 
-	TodoplanCount    int `json:"todoplan_count,omitempty"`
-	FailedPlanCount  int `json:"failed_plan_count,omitempty"`
-	SuccessPlanCount int `json:"success_plan_count,omitempty"`
+	TodoplanCount    int `json:"todoplan_count,omitempty" orm:"column(todoplan_count)"`
+	FailedPlanCount  int `json:"failed_plan_count,omitempty" orm:"column(failed_plan_count)"`
+	SuccessPlanCount int `json:"success_plan_count,omitempty" orm:"column(success_plan_count)"`
 
-	Loc         []*support.Location `json:"loc,omitempty"`
-	Employments []*support.Career   `json:"employments,omitempty"`
+	Loc         []*support.Location `json:"loc,omitempty" orm:"-"`
+	Employments []*support.Career   `json:"employments,omitempty"  orm:"-"`
 
-	Deleted bool      `json:"deleted,omitempty"`
+	Deleted bool      `json:"deleted,omitempty" orm:"column(deleted)"`
 	Created time.Time `json:"created"  orm:"auto_now_add;type(datetime)"`
 	Updated time.Time `json:"updated" orm:"auto_now;type(datetime)"`
 }
@@ -63,6 +56,7 @@ func (u *User) Insert() (bool, error) {
 	if u == nil {
 		return false, errors.New("empty object")
 	}
+	o := orm.NewOrm()
 	u.Deleted = false
 	err := o.Read(u, "uid", "deleted")
 	if err == orm.ErrNoRows {
@@ -76,6 +70,7 @@ func (u *User) Insert() (bool, error) {
 }
 
 func (u *User) Get() (bool, error) {
+	o := orm.NewOrm()
 	err := o.Read(u, "uid", "deleted")
 	if err == orm.ErrNoRows {
 		return false, errors.New("user not exist")
@@ -87,6 +82,7 @@ func (u *User) Update(colms ...string) (bool, error) {
 	if len(colms) <= 0 {
 		return true, nil
 	}
+	o := orm.NewOrm()
 	var temp = NewUser()
 	temp.UID = u.UID
 	err := o.Read(temp, "uid", "deleted")
@@ -101,6 +97,7 @@ func (u *User) Update(colms ...string) (bool, error) {
 }
 
 func (u *User) Delete() (bool, error) {
+	o := orm.NewOrm()
 	err := o.Read(u, "uid", "deleted")
 	if err == orm.ErrNoRows {
 		return true, nil
@@ -113,6 +110,7 @@ func (u *User) Delete() (bool, error) {
 }
 
 func (u *User) GetByCondition(condition string) (bool, error) {
+	o := orm.NewOrm()
 	err := o.Read(u, "condition", "deleted")
 	if err == orm.ErrNoRows {
 		return false, errors.New("user not exist")

@@ -21,7 +21,6 @@ func Init(conf *conf.Config) (bool, error) {
 		return false, errors.New("config is nil")
 	}
 	orm.RegisterDriver("mysql", orm.DRMySQL)
-
 	log.Info("start init database ", conf)
 	dsn := fmt.Sprintf("%s:%s@%s?charset=utf8", conf.DbUser, conf.DbPassword, conf.DbAddress)
 	log.Info("database dsn : ", dsn)

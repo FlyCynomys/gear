@@ -4,42 +4,21 @@ import (
 	"errors"
 	"time"
 
-	"github.com/FlyCynomys/gear/models/support"
 	"github.com/astaxie/beego/orm"
 )
 
 type User struct {
-	ID          int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
-	UID         int64  `json:"uid,omitempty" orm:"column(uid)"`
-	UrlToken    string `json:"url_token,omitempty" orm:"column(url_token)"`
-	NickName    string `json:"nick_name,omitempty" orm:"column(nick_name)"`
-	UserType    string `json:"user_type,omitempty" orm:"column(user_type)"`
-	Gender      int    `json:"gender,omitempty" orm:"column(gender)"`
-	RealName    string `json:"real_name,omitempty" orm:"column(real_name)"`
-	AvatarUrl   string `json:"avatar_url,omitempty" orm:"column(avatar_url)"`
-	IsOrg       bool   `json:"is_org,omitempty" orm:"column(is_org)"`
-	Description string `json:"description,omitempty" orm:"column(description)"`
-	CoverUrl    string `json:"cover_url,omitempty" orm:"column(cover_url)"`
-	Email       string `json:"email,omitempty" orm:"column(email)"`
+	ID        int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
+	UID       int64  `json:"uid,omitempty" orm:"column(uid)"`
+	UrlToken  string `json:"url_token,omitempty" orm:"column(url_token)"`
+	NickName  string `json:"nick_name,omitempty" orm:"column(nick_name);charset(utf8)"`
+	UserType  string `json:"user_type,omitempty" orm:"column(user_type)"`
+	Gender    int    `json:"gender,omitempty" orm:"column(gender)"`
+	RealName  string `json:"real_name,omitempty" orm:"column(real_name)"`
+	AvatarUrl string `json:"avatar_url,omitempty" orm:"column(avatar_url)"`
 
-	ShowSinaWeibo bool `json:"show_sina_weibo,omitempty" orm:"column(show_sina_weibo)"`
-	IsBindSina    bool `json:"is_bind_sina,omitempty" orm:"column(is_bind_sina)"`
-
-	ThankFromCount    int `json:"thank_from_count,omitempty" orm:"column(thank_from_count)"`
-	ThankToCount      int `json:"thank_to_count,omitempty" orm:"column(thank_to_count)"`
-	QuestionCount     int `json:"question_count,omitempty" orm:"column(question_count)"`
-	FollowingCount    int `json:"following_count,omitempty" orm:"column(following_count)"`
-	VoteStarFromCount int `json:"vote_star_from_count,omitempty" orm:"column(vote_star_from_count)"`
-	VoteStarToCount   int `json:"vote_star_to_count,omitempty" orm:"column(vote_star_to_count)"`
-
-	Headline string `json:"headline,omitempty" orm:"column(headline)"`
-
-	TodoplanCount    int `json:"todoplan_count,omitempty" orm:"column(todoplan_count)"`
-	FailedPlanCount  int `json:"failed_plan_count,omitempty" orm:"column(failed_plan_count)"`
-	SuccessPlanCount int `json:"success_plan_count,omitempty" orm:"column(success_plan_count)"`
-
-	Loc         []*support.Location `json:"loc,omitempty" orm:"-"`
-	Employments []*support.Career   `json:"employments,omitempty"  orm:"-"`
+	Email string `json:"email,omitempty" orm:"column(email)"`
+	Phone string `json:"phone,omitempty" orm:"column(phone)"`
 
 	Deleted bool      `json:"deleted,omitempty" orm:"column(deleted)"`
 	Created time.Time `json:"created"  orm:"auto_now_add;type(datetime)"`

@@ -7,22 +7,14 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-var o orm.Ormer
-
-func Init() {
-	o = orm.NewOrm()
-	o.Using("default")
-}
-
 type Active struct {
 	ID          int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
-	AID         int64  `json:"aid,omitempty" orm:"column(aid)"`
+	ActiveID    int64  `json:"activeid,omitempty" orm:"column(activeid)"`
 	Topic       string `json:"topic,omitempty" orm:"column(topic)"`
 	Headline    string `json:"headline,omitempty" orm:"column(headline)"`
 	Description string `json:"description,omitempty" orm:"column(descriptions)"`
 
-	Deleted bool `json:"deleted,omitempty" orm:"column(deleted)"`
-
+	Deleted bool      `json:"deleted,omitempty" orm:"column(deleted)"`
 	Created time.Time `json:"created"  orm:"auto_now_add;type(datetime)"`
 	Updated time.Time `json:"updated" orm:"auto_now;type(datetime)"`
 }
@@ -34,7 +26,9 @@ func NewActive() *Active {
 }
 
 func (a *Active) Insert() (bool, error) {
-	err := o.Read(a, "aid")
+	o := orm.NewOrm()
+	o.Using("default")
+	err := o.Read(a, "activeid")
 	if err == orm.ErrNoRows {
 		_, err = o.Insert(a)
 		if err != nil {
@@ -49,7 +43,9 @@ func (a *Active) Insert() (bool, error) {
 }
 
 func (a *Active) Get() (bool, error) {
-	err := o.Read(a, "aid", "deleted")
+	o := orm.NewOrm()
+	o.Using("default")
+	err := o.Read(a, "activeid", "deleted")
 	if err != nil {
 		if err == orm.ErrNoRows {
 			return false, errors.New("active not exist")
@@ -64,8 +60,10 @@ func (a *Active) Update(colms ...string) (bool, error) {
 		return true, nil
 	}
 	temp := NewActive()
-	temp.AID = a.AID
-	err := o.Read(temp, "aid", "deleted")
+	temp.ActiveID = a.ActiveID
+	o := orm.NewOrm()
+	o.Using("default")
+	err := o.Read(temp, "activeid", "deleted")
 	if err != nil {
 		if err == orm.ErrNoRows {
 			return false, errors.New("active not exist")
@@ -80,7 +78,9 @@ func (a *Active) Update(colms ...string) (bool, error) {
 }
 
 func (a *Active) Delete() (bool, error) {
-	_, err := o.Update(a, "aid", "deleted")
+	o := orm.NewOrm()
+	o.Using("default")
+	_, err := o.Update(a, "activeid", "deleted")
 	if err != nil {
 		if err == orm.ErrNoRows {
 			return false, errors.New("active not exist")
@@ -91,6 +91,8 @@ func (a *Active) Delete() (bool, error) {
 }
 
 func (a *Active) GetActiveByCondition(condition string) (bool, error) {
+	o := orm.NewOrm()
+	o.Using("default")
 	err := o.Read(a, condition, "deleted")
 	if err == orm.ErrNoRows {
 		return false, errors.New("active not exist")

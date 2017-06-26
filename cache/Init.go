@@ -8,10 +8,15 @@ import (
 	redis "github.com/go-redis/redis"
 )
 
-var RedisClient *redis.Client
+type CacheClient struct {
+	RedisClient *redis.Client
+}
+
+var cc *CacheClient
 
 func Init() {
-	RedisClient = redis.NewClient(&redis.Options{
+	cc = new(CacheClient)
+	cc.RedisClient = redis.NewClient(&redis.Options{
 		Addr:         conf.GetCfg().RedisAddress,
 		Password:     "",
 		DB:           0,
@@ -26,7 +31,7 @@ func Init() {
 		for {
 			select {
 			case <-ti.C:
-				_, err := RedisClient.Ping().Result()
+				_, err := cc.RedisClient.Ping().Result()
 				if err != nil {
 					log.Error(err)
 				}

@@ -18,7 +18,12 @@ type Auth struct {
 	UrlToken string `json:"url_token,omitempty" orm:"column(url_token)"`
 	Password string `json:"password,omitempty" orm:"column(password)"`
 	Email    string `json:"email,omitempty" orm:"column(email)"`
+	Nickname string `json:"nickname,omitempty" orm:"column(nickname);charset(utf8)"`
+	Phone    string `json:"phone,omitempty" orm:"column(phone)"`
 	Salt     string `json:"salt,omitempty" orm:"column(salt)"`
+
+	Actived     bool   `json:"active,omitempty" orm:"column(actived)"`
+	NotifyEmail string `json:"notifyemail,omitempty" orm:"column(notifyemail)"`
 
 	Deleted bool `json:"deleted,omitempty"`
 

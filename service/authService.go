@@ -1,8 +1,12 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/FlyCynomys/gear/models/auth"
+	"github.com/FlyCynomys/gear/models/user"
 	"github.com/FlyCynomys/tools/format"
+	"github.com/FlyCynomys/tools/log"
 )
 
 const (
@@ -55,11 +59,13 @@ func (a *AuthService) Register(account, password, nickname string) *Result {
 	au := auth.NewAuthWithSalt()
 	au.Email = account
 	au.Password = password
-	data, ok := format.TransToPinyin(nickname)
+	au.Nickname = nickname
+	urltoken, ok := format.TransToPinyin(nickname)
+	fmt.Println(urltoken, ok)
 	if ok != true {
 		au.UrlToken = ""
 	} else {
-		au.UrlToken = data
+		au.UrlToken = urltoken
 	}
 	ok, err := au.Insert()
 	if err != nil {
@@ -67,9 +73,24 @@ func (a *AuthService) Register(account, password, nickname string) *Result {
 		re.Data = ok
 		re.Description = err.Error()
 	} else {
+
+		newuser := user.NewUser()
+		CopyAuthInfo2UserInfo(au, newuser)
+		createUserOk, err := newuser.Insert()
+		if createUserOk == false {
+			log.Error("create user error : ", err)
+		}
 		re.Status = 1
 		re.Data = au.UID
 		re.Description = "ok"
 	}
 	return re
+}
+
+func CopyAuthInfo2UserInfo(authinfo *auth.Auth, userinfo *user.User) {
+	userinfo.UID = authinfo.UID
+	userinfo.Email = authinfo.Email
+	userinfo.NickName = authinfo.Nickname
+	userinfo.Gender = 0 //1,2,3,4
+	userinfo.UrlToken = authinfo.UrlToken
 }

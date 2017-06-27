@@ -12,6 +12,7 @@ import (
 	"github.com/FlyCynomys/gear/handles"
 	"github.com/FlyCynomys/gear/models"
 	"github.com/FlyCynomys/gear/service"
+	"github.com/FlyCynomys/tools/log"
 )
 
 var cfgpath = flag.String("c", "cfg.json", "config file path")
@@ -34,5 +35,9 @@ func main() {
 		syscall.SIGTERM,
 		syscall.SIGQUIT,
 	)
-	<-sc
+	select {
+	case si := <-sc:
+		log.Info("signal : ", si.String())
+	}
+
 }

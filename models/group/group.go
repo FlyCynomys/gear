@@ -8,11 +8,11 @@ import (
 )
 
 type Group struct {
-	ID          int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
-	GID         int64  `json:"gid,omitempty" orm:"column(gid)"`
-	NickName    string `json:"nick_name,omitempty" orm:"column(nick_name)"`
-	Headline    string `json:"headline,omitempty" orm:"column(headline)"`
-	Description string `json:"description,omitempty" orm:"column(description)"`
+	ID            int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
+	GID           int64  `json:"gid,omitempty" orm:"column(gid)"`
+	GroupNickName string `json:"group_nick_name,omitempty" orm:"column(group_nick_name);charset(utf8)"`
+	Headline      string `json:"headline,omitempty" orm:"column(headline)"`
+	Description   string `json:"description,omitempty" orm:"column(description)"`
 
 	Deleted bool `json:"deleted,omitempty" orm:"column(deleted)"`
 

@@ -16,6 +16,32 @@ import (
 	"github.com/FlyCynomys/gear/models/user"
 )
 
+func RegisterAuthModel() {
+	orm.RegisterModel(new(auth.Auth))
+}
+
+func RegisterSupportModel() {
+	orm.RegisterModel(new(support.Location))
+	orm.RegisterModel(new(support.Company))
+	orm.RegisterModel(new(support.Job))
+}
+
+func RegisterGroupModel() {
+	orm.RegisterModel(new(group.Group))
+}
+
+func RegisterUserModel() {
+	orm.RegisterModel(new(user.User))
+	orm.RegisterModel(new(user.UserSetting))
+	orm.RegisterModel(new(user.FollowShip))
+	orm.RegisterModel(new(user.Profile))
+	orm.RegisterModel(new(user.FriendShip))
+}
+
+func RegisterTodoModel() {
+	orm.RegisterModel(new(todo.TodoPlan))
+}
+
 func Init(conf *conf.Config) (bool, error) {
 	if conf == nil {
 		return false, errors.New("config is nil")
@@ -29,13 +55,11 @@ func Init(conf *conf.Config) (bool, error) {
 		return false, err
 	}
 
-	orm.RegisterModel(new(auth.Auth))
-	orm.RegisterModel(new(group.Group))
-	orm.RegisterModel(new(support.Location))
-	orm.RegisterModel(new(support.Company))
-	orm.RegisterModel(new(support.Job))
-	orm.RegisterModel(new(todo.TodoPlan))
-	orm.RegisterModel(new(user.User))
+	RegisterAuthModel()
+	RegisterGroupModel()
+	RegisterSupportModel()
+	RegisterTodoModel()
+	RegisterUserModel()
 
 	orm.RunSyncdb("default", true, true)
 	orm.Debug = true

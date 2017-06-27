@@ -23,7 +23,7 @@ type Auth struct {
 	Salt     string `json:"salt,omitempty" orm:"column(salt)"`
 
 	Actived     bool   `json:"active,omitempty" orm:"column(actived)"`
-	NotifyEmail string `json:"notifyemail,omitempty" orm:"column(notifyemail)"`
+	ActiveEmail string `json:"Active_email,omitempty" orm:"column(active_email)"`
 
 	Deleted bool `json:"deleted,omitempty"`
 

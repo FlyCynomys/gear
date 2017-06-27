@@ -11,6 +11,7 @@ import (
 
 	"github.com/FlyCynomys/gear/models/auth"
 	"github.com/FlyCynomys/gear/models/group"
+	"github.com/FlyCynomys/gear/models/license"
 	"github.com/FlyCynomys/gear/models/support"
 	"github.com/FlyCynomys/gear/models/todo"
 	"github.com/FlyCynomys/gear/models/user"
@@ -42,6 +43,10 @@ func RegisterTodoModel() {
 	orm.RegisterModel(new(todo.TodoPlan))
 }
 
+func RegisterLicenseModel() {
+	orm.RegisterModel(new(license.License))
+}
+
 func Init(conf *conf.Config) (bool, error) {
 	if conf == nil {
 		return false, errors.New("config is nil")
@@ -60,6 +65,7 @@ func Init(conf *conf.Config) (bool, error) {
 	RegisterSupportModel()
 	RegisterTodoModel()
 	RegisterUserModel()
+	RegisterLicenseModel()
 
 	orm.RunSyncdb("default", true, true)
 	orm.Debug = true

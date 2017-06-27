@@ -97,9 +97,32 @@ func (g *Group) GetGroupByCondition(condition string) (bool, error) {
 }
 
 func GetGroupByCondition(query string) ([]*Group, error) {
+	grouplist := new([]*Group)
+	o := orm.NewOrm()
+	length, err := o.Raw(query).QueryRows(grouplist)
+	if err != nil {
+		return nil, err
+	}
+	if length <= 0 {
+		return nil, nil
+	}
 	return nil, nil
 }
 
-func DeleteGroupByCondition(query string) (bool, error) {
-	return true, nil
+func DeleteGroupByCondition(query string) (int64, bool, error) {
+	o := orm.NewOrm()
+	pre, err := o.Raw(query).Prepare()
+	if err != nil {
+		return 0, false, err
+	}
+	defer pre.Close()
+	result, err := pre.Exec()
+	if err != nil {
+		return 0, false, err
+	}
+	num, err := result.RowsAffected()
+	if err != nil {
+		return num, false, err
+	}
+	return 0, true, nil
 }

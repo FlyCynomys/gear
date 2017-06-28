@@ -8,8 +8,7 @@ import (
 )
 
 type License struct {
-	ID          int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
-	LID         int64  `json:"lid,omitempty" orm:"column(lid)"`
+	LicenseID   int64  `json:"licenseid,omitempty" orm:"column(licenseid);pk;auto"`
 	LicenseName string `json:"license_name,omitempty" orm:"column(license_name);charset(utf8)"`
 	Label       string `json:"label,omitempty" orm:"column(label);charset(utf8)"`
 	Description string `json:"description,omitempty" orm:"column(description);charset(utf8)"`
@@ -32,25 +31,18 @@ func NewLicense() *License {
 	}
 }
 
-func (l *License) Insert() (bool, error) {
+func (l *License) Insert() (int64, bool, error) {
 	o := orm.NewOrm()
-	err := o.Read(l, "lid")
-	if err == orm.ErrNoRows {
-		_, err = o.Insert(l)
-		if err != nil {
-			return false, errors.New("create License failed")
-		}
-		return true, nil
-	}
+	index, err := o.Insert(l)
 	if err != nil {
-		return false, err
+		return -1, false, errors.New("create License failed")
 	}
-	return false, errors.New("create License failed")
+	return index, true, nil
 }
 
 func (l *License) Get() (bool, error) {
 	o := orm.NewOrm()
-	err := o.Read(l, "lid")
+	err := o.Read(l, "licenseid")
 	if err != nil {
 		if err == orm.ErrNoRows {
 			return false, errors.New("License not exist")
@@ -65,16 +57,7 @@ func (l *License) Update(colms ...string) (bool, error) {
 		return true, nil
 	}
 	o := orm.NewOrm()
-	temp := NewLicense()
-	temp.LID = l.LID
-	err := o.Read(temp, "lid", "deleted")
-	if err != nil {
-		if err == orm.ErrNoRows {
-			return false, errors.New("License not exist")
-		}
-		return false, err
-	}
-	_, err = o.Update(l, colms...)
+	_, err := o.Update(l, colms...)
 	if err != nil {
 		return false, err
 	}
@@ -83,11 +66,9 @@ func (l *License) Update(colms ...string) (bool, error) {
 
 func (l *License) Delete() (bool, error) {
 	o := orm.NewOrm()
-	_, err := o.Update(l, "lid", "deleted")
+	l.Deleted = true
+	_, err := o.Update(l, "licenseid", "deleted")
 	if err != nil {
-		if err == orm.ErrNoRows {
-			return false, errors.New("License not exist")
-		}
 		return false, err
 	}
 	return true, nil

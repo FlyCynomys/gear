@@ -13,8 +13,8 @@ import (
 var IdGenerator, _ = uuid.NewIdWorker(1)
 
 type Auth struct {
-	ID       int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
-	UID      int64  `json:"uid,omitempty" orm:"column(uid)"`
+	AuthID   int64  `json:"authid,omitempty" orm:"column(authid);pk;auto"`
+	UserID   int64  `json:"userid,omitempty" orm:"column(userid)"`
 	UrlToken string `json:"url_token,omitempty" orm:"column(url_token)"`
 	Password string `json:"password,omitempty" orm:"column(password)"`
 	Email    string `json:"email,omitempty" orm:"column(email)"`
@@ -46,20 +46,12 @@ func NewAuthWithSalt() *Auth {
 
 func (a *Auth) Insert() (bool, *Err.ErrorCode) {
 	o := orm.NewOrm()
-	err := o.Read(a, "email", "deleted")
-	if err == orm.ErrNoRows {
-		a.Password = EncodePassword(a.Password, a.Salt)
-		a.UID, err = IdGenerator.NextId()
-		if err != nil {
-			return false, Err.New(-1, err.Error())
-		}
-		_, err = o.Insert(a)
-		if err != nil {
-			return false, Err.New(-1, err.Error())
-		}
-		return true, nil
+	a.Password = EncodePassword(a.Password, a.Salt)
+	_, err := o.Insert(a)
+	if err != nil {
+		return false, Err.New(-1, err.Error())
 	}
-	return false, ErrCode.ErrorAuthInfoHasExist
+	return true, nil
 }
 
 func (a *Auth) Get() (bool, *Err.ErrorCode) {
@@ -93,7 +85,7 @@ func (a *Auth) GetByAccount(email string) (bool, *Err.ErrorCode) {
 func (a *Auth) GetByUid() (bool, *Err.ErrorCode) {
 	o := orm.NewOrm()
 	password := a.Password
-	err := o.Read(a, "uid", "deleted")
+	err := o.Read(a, "userid", "deleted")
 	if err == orm.ErrNoRows {
 		return false, ErrCode.ErrorUserNotExist
 	}
@@ -115,7 +107,7 @@ func (a *Auth) Update() (bool, *Err.ErrorCode) {
 
 func (a *Auth) Delete() (bool, *Err.ErrorCode) {
 	o := orm.NewOrm()
-	_, err := o.Update(a, "uid", "deleted")
+	_, err := o.Update(a, "authid", "deleted")
 	if err != nil {
 		if err == orm.ErrNoRows {
 			return false, ErrCode.ErrorAuthInfoUpdateFailed

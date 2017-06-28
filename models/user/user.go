@@ -8,8 +8,7 @@ import (
 )
 
 type User struct {
-	ID        int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
-	UID       int64  `json:"uid,omitempty" orm:"column(uid)"`
+	UserID    int64  `json:"userid,omitempty" orm:"column(userid);pk;auto"`
 	UrlToken  string `json:"url_token,omitempty" orm:"column(url_token)"`
 	NickName  string `json:"nick_name,omitempty" orm:"column(nick_name);charset(utf8)"`
 	UserType  string `json:"user_type,omitempty" orm:"column(user_type)"`
@@ -31,26 +30,18 @@ func NewUser() *User {
 	}
 }
 
-func (u *User) Insert() (bool, error) {
-	if u == nil {
-		return false, errors.New("empty object")
-	}
+func (u *User) Insert() (int64, bool, error) {
 	o := orm.NewOrm()
-	u.Deleted = false
-	err := o.Read(u, "uid", "deleted")
-	if err == orm.ErrNoRows {
-		_, err := o.Insert(u)
-		if err != nil {
-			return false, err
-		}
-		return true, nil
+	index, err := o.Insert(u)
+	if err != nil {
+		return -1, false, err
 	}
-	return true, nil
+	return index, true, nil
 }
 
 func (u *User) Get() (bool, error) {
 	o := orm.NewOrm()
-	err := o.Read(u, "uid", "deleted")
+	err := o.Read(u, "userid", "deleted")
 	if err == orm.ErrNoRows {
 		return false, errors.New("user not exist")
 	}
@@ -62,13 +53,7 @@ func (u *User) Update(colms ...string) (bool, error) {
 		return true, nil
 	}
 	o := orm.NewOrm()
-	var temp = NewUser()
-	temp.UID = u.UID
-	err := o.Read(temp, "uid", "deleted")
-	if err == orm.ErrNoRows {
-		return false, errors.New("user not exist")
-	}
-	_, err = o.Update(u, colms...)
+	_, err := o.Update(u, colms...)
 	if err != nil {
 		return false, errors.New("update failed")
 	}
@@ -77,11 +62,8 @@ func (u *User) Update(colms ...string) (bool, error) {
 
 func (u *User) Delete() (bool, error) {
 	o := orm.NewOrm()
-	err := o.Read(u, "uid", "deleted")
-	if err == orm.ErrNoRows {
-		return true, nil
-	}
-	_, err = o.Update(u, "deleted")
+	u.Deleted = true
+	_, err := o.Update(u, "deleted")
 	if err != nil {
 		return false, errors.New("delete user failed")
 	}

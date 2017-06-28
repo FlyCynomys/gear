@@ -8,8 +8,7 @@ import (
 )
 
 type Group struct {
-	ID            int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
-	GID           int64  `json:"gid,omitempty" orm:"column(gid)"`
+	GroupID       int64  `json:"groupid,omitempty" orm:"column(groupid);pk;auto"`
 	GroupNickName string `json:"group_nick_name,omitempty" orm:"column(group_nick_name);charset(utf8)"`
 	Headline      string `json:"headline,omitempty" orm:"column(headline)"`
 	Description   string `json:"description,omitempty" orm:"column(description)"`
@@ -26,25 +25,18 @@ func NewGroup() *Group {
 	}
 }
 
-func (g *Group) Insert() (bool, error) {
+func (g *Group) Insert() (int64, bool, error) {
 	o := orm.NewOrm()
-	err := o.Read(g, "gid")
-	if err == orm.ErrNoRows {
-		_, err = o.Insert(g)
-		if err != nil {
-			return false, errors.New("create group failed")
-		}
-		return true, nil
-	}
+	index, err := o.Insert(g)
 	if err != nil {
-		return false, err
+		return -1, false, errors.New("insert group failed")
 	}
-	return false, errors.New("create group failed")
+	return index, true, nil
 }
 
 func (g *Group) Get() (bool, error) {
 	o := orm.NewOrm()
-	err := o.Read(g, "gid")
+	err := o.Read(g, "groupid")
 	if err != nil {
 		if err == orm.ErrNoRows {
 			return false, errors.New("group not exist")
@@ -59,16 +51,7 @@ func (g *Group) Update(colms ...string) (bool, error) {
 		return true, nil
 	}
 	o := orm.NewOrm()
-	temp := NewGroup()
-	temp.GID = g.GID
-	err := o.Read(temp, "gid", "deleted")
-	if err != nil {
-		if err == orm.ErrNoRows {
-			return false, errors.New("group not exist")
-		}
-		return false, err
-	}
-	_, err = o.Update(g, colms...)
+	_, err := o.Update(g, colms...)
 	if err != nil {
 		return false, err
 	}
@@ -77,11 +60,9 @@ func (g *Group) Update(colms ...string) (bool, error) {
 
 func (g *Group) Delete() (bool, error) {
 	o := orm.NewOrm()
-	_, err := o.Update(g, "gid", "deleted")
+	g.Deleted = true
+	_, err := o.Update(g, "groupid", "deleted")
 	if err != nil {
-		if err == orm.ErrNoRows {
-			return false, errors.New("group not exist")
-		}
 		return false, err
 	}
 	return true, nil
@@ -106,7 +87,7 @@ func GetGroupByCondition(query string) ([]*Group, error) {
 	if length <= 0 {
 		return nil, nil
 	}
-	return nil, nil
+	return *grouplist, nil
 }
 
 func DeleteGroupByCondition(query string) (int64, bool, error) {

@@ -3,7 +3,7 @@ package user
 import "time"
 
 type FriendShip struct {
-	Id        int64 `json:"id,omitempty" orm:"column(id)"`
+	Id        int64 `json:"id,omitempty" orm:"column(id);pk;auto"`
 	Uid       int64 `json:"uid,omitempty" orm:"column(uid)"`
 	FriendUid int64 `json:"frienduid,omitempty" orm:"column(frienduid)"`
 

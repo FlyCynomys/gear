@@ -25,6 +25,7 @@ func RegisterSupportModel() {
 	orm.RegisterModel(new(support.Location))
 	orm.RegisterModel(new(support.Company))
 	orm.RegisterModel(new(support.Job))
+	orm.RegisterModel(new(support.Career))
 }
 
 func RegisterGroupModel() {

@@ -8,8 +8,7 @@ import (
 )
 
 type Active struct {
-	ID          int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
-	ActiveID    int64  `json:"activeid,omitempty" orm:"column(activeid)"`
+	ActiveID    int64  `json:"activeid,omitempty" orm:"column(activeid);pk;auto"`
 	Topic       string `json:"topic,omitempty" orm:"column(topic)"`
 	Headline    string `json:"headline,omitempty" orm:"column(headline)"`
 	Description string `json:"description,omitempty" orm:"column(descriptions)"`
@@ -25,21 +24,14 @@ func NewActive() *Active {
 	}
 }
 
-func (a *Active) Insert() (bool, error) {
+func (a *Active) Insert() (int64, bool, error) {
 	o := orm.NewOrm()
 	o.Using("default")
-	err := o.Read(a, "activeid")
-	if err == orm.ErrNoRows {
-		_, err = o.Insert(a)
-		if err != nil {
-			return false, errors.New("create active failed")
-		}
-		return true, nil
-	}
+	index, err := o.Insert(a)
 	if err != nil {
-		return false, err
+		return -1, false, errors.New("create active failed")
 	}
-	return false, errors.New("create active failed")
+	return index, true, nil
 }
 
 func (a *Active) Get() (bool, error) {
@@ -59,18 +51,9 @@ func (a *Active) Update(colms ...string) (bool, error) {
 	if len(colms) <= 0 {
 		return true, nil
 	}
-	temp := NewActive()
-	temp.ActiveID = a.ActiveID
 	o := orm.NewOrm()
 	o.Using("default")
-	err := o.Read(temp, "activeid", "deleted")
-	if err != nil {
-		if err == orm.ErrNoRows {
-			return false, errors.New("active not exist")
-		}
-		return false, err
-	}
-	_, err = o.Update(a, colms...)
+	_, err := o.Update(a, colms...)
 	if err != nil {
 		return false, err
 	}

@@ -3,7 +3,7 @@ package user
 import "time"
 
 type FollowShip struct {
-	Id         int64 `json:"id,omitempty" orm:"column(id)"`
+	Id         int64 `json:"id,omitempty" orm:"column(id);pk;auto"`
 	UID        int64 `json:"uid,omitempty" orm:"column(uid)"`
 	FollowerId int64 `json:"follower_id,omitempty" orm:"column(follower_id)"`
 

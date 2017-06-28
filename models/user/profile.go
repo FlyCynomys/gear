@@ -1,17 +1,13 @@
 package user
 
-import (
-	"time"
-
-	"github.com/FlyCynomys/gear/models/support"
-)
+import "time"
 
 //usr profile modify by user active
 //用户的配置只有从属关系，没有删除功能，但是保留删除字段
 
 type Profile struct {
-	ID  int64 `json:"id" orm:"column(id)"`
-	UID int64 `json:"uid" orm:"column(uid)"`
+	ID     int64 `json:"id" orm:"column(id);pk;auto"`
+	UserID int64 `json:"userid" orm:"column(userid)"`
 
 	ThankFromCount    int `json:"thank_from_count,omitempty" orm:"column(thank_from_count)"`
 	ThankToCount      int `json:"thank_to_count,omitempty" orm:"column(thank_to_count)"`
@@ -23,9 +19,6 @@ type Profile struct {
 	TodoplanCount    int `json:"todoplan_count,omitempty" orm:"column(todoplan_count)"`
 	FailedPlanCount  int `json:"failed_plan_count,omitempty" orm:"column(failed_plan_count)"`
 	SuccessPlanCount int `json:"success_plan_count,omitempty" orm:"column(success_plan_count)"`
-
-	Loc         []*support.Location `json:"loc,omitempty" orm:"-"`
-	Employments []*support.Career   `json:"employments,omitempty"  orm:"-"`
 
 	Deleted bool      `json:"deleted,omitempty" orm:"column(deleted)"`
 	Created time.Time `json:"created"  orm:"auto_now_add;type(datetime)"`

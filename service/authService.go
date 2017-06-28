@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/FlyCynomys/gear/models/auth"
 	"github.com/FlyCynomys/gear/models/user"
 	"github.com/FlyCynomys/tools/format"
@@ -30,7 +28,7 @@ func (a *AuthService) Login(account string, password string) *Result {
 		re.Description = err.Error()
 	} else {
 		re.Status = 1
-		re.Data = au.UID
+		re.Data = au.UserID
 		re.Description = "ok"
 	}
 	return re
@@ -61,34 +59,36 @@ func (a *AuthService) Register(account, password, nickname string) *Result {
 	au.Password = password
 	au.Nickname = nickname
 	urltoken, ok := format.TransToPinyin(nickname)
-	fmt.Println(urltoken, ok)
 	if ok != true {
 		au.UrlToken = ""
 	} else {
 		au.UrlToken = urltoken
 	}
-	ok, err := au.Insert()
-	if err != nil {
+	newuser := user.NewUser()
+	CopyAuthInfo2UserInfo(au, newuser)
+	uid, createUserOk, err := newuser.Insert()
+	if createUserOk == false {
+		log.Error("create user error : ", err)
 		re.Status = -1
 		re.Data = ok
 		re.Description = err.Error()
-	} else {
-
-		newuser := user.NewUser()
-		CopyAuthInfo2UserInfo(au, newuser)
-		createUserOk, err := newuser.Insert()
-		if createUserOk == false {
-			log.Error("create user error : ", err)
-		}
-		re.Status = 1
-		re.Data = au.UID
-		re.Description = "ok"
+		return re
 	}
+	au.UserID = uid
+	ok, err = au.Insert()
+	if !ok {
+		re.Status = -1
+		re.Data = ok
+		re.Description = err.Error()
+		return re
+	}
+	re.Status = 1
+	re.Data = au.UserID
+	re.Description = "ok"
 	return re
 }
 
 func CopyAuthInfo2UserInfo(authinfo *auth.Auth, userinfo *user.User) {
-	userinfo.UID = authinfo.UID
 	userinfo.Email = authinfo.Email
 	userinfo.NickName = authinfo.Nickname
 	userinfo.Gender = 0 //1,2,3,4

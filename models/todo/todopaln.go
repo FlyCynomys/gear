@@ -8,8 +8,7 @@ import (
 )
 
 type TodoPlan struct {
-	ID          int64  `json:"id,omitempty" orm:"column(id);pk;auto"`
-	TID         int64  `json:"tid,omitempty" orm:"column(tid)"`
+	TodoPlanID  int64  `json:"todoplanid,omitempty" orm:"column(todoplanid);pk;auto"`
 	OwnerID     int64  `json:"owner_id,omitempty" orm:"column(owner_id)"`
 	Headline    string `json:"headline,omitempty" orm:"column(headlines)"`
 	Description string `json:"description,omitempty" orm:"column(description)"`
@@ -26,73 +25,45 @@ func NewTodoPlan() *TodoPlan {
 	}
 }
 
-func (t *TodoPlan) Insert() (bool, error) {
+func (c *TodoPlan) Insert() (int64, bool, error) {
 	o := orm.NewOrm()
-	err := o.Read(t, "tid", "deleted")
-	if err == orm.ErrNoRows {
-		_, err = o.Insert(t)
-		if err != nil {
-			return false, errors.New("create plan failed")
+	index, err := o.Insert(c)
+	if err != nil {
+		return -1, false, errors.New("create TodoPlan failed")
+	}
+	return index, true, nil
+}
+
+func (c *TodoPlan) Get() (bool, error) {
+	o := orm.NewOrm()
+	err := o.Read(c, "todoplanid")
+	if err != nil {
+		if err == orm.ErrNoRows {
+			return false, errors.New("TodoPlan not exist")
 		}
-		return true, nil
-	}
-	if err != nil {
 		return false, err
 	}
 	return true, nil
 }
 
-func (t *TodoPlan) Get() (bool, error) {
-	o := orm.NewOrm()
-	err := o.Read(t, "tid", "deleted")
-	if err == orm.ErrNoRows {
-		return false, errors.New("plan not exist")
-	}
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-func (t *TodoPlan) Update(colms ...string) (bool, error) {
-
+func (c *TodoPlan) Update(colms ...string) (bool, error) {
 	if len(colms) <= 0 {
 		return true, nil
 	}
 	o := orm.NewOrm()
-
-	temp := NewTodoPlan()
-	temp.TID = t.TID
-	err := o.Read(temp, "tid")
-	if err == orm.ErrNoRows {
-		return false, errors.New("plan not exist")
-	}
-	_, err = o.Update(t, colms...)
+	_, err := o.Update(c, colms...)
 	if err != nil {
-		return false, errors.New("update plan failed")
+		return false, err
 	}
 	return true, nil
 }
 
-func (t *TodoPlan) Delete() (bool, error) {
+func (c *TodoPlan) Delete() (bool, error) {
 	o := orm.NewOrm()
-	err := o.Read(t, "tid", "deleted")
-	if err == orm.ErrNoRows {
-		return true, nil
-	}
-	t.Deleted = true
-	_, err = o.Update(t, "deleted")
+	c.Deleted = true
+	_, err := o.Update(c, "todoplanid", "deleted")
 	if err != nil {
-		return false, errors.New("delete plan failed")
-	}
-	return true, nil
-}
-
-func (t *TodoPlan) GetTodoPlanByCondition(condition string) (bool, error) {
-	o := orm.NewOrm()
-	err := o.Read(t, condition, "deleted")
-	if err == orm.ErrNoRows {
-		return false, errors.New("plan not exist")
+		return false, err
 	}
 	return true, nil
 }

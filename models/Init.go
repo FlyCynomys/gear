@@ -7,6 +7,7 @@ import (
 	"github.com/FlyCynomys/gear/conf"
 	"github.com/FlyCynomys/tools/log"
 	"github.com/astaxie/beego/orm"
+	//_ "github.com/lib/pq"
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/FlyCynomys/gear/models/auth"
@@ -52,9 +53,10 @@ func Init(conf *conf.Config) (bool, error) {
 	if conf == nil {
 		return false, errors.New("config is nil")
 	}
-	orm.RegisterDriver("mysql", orm.DRMySQL)
+	orm.RegisterDriver("mysql", orm.DRPostgres)
 	log.Info("start init database ", conf)
 	dsn := fmt.Sprintf("%s:%s@%s?charset=utf8", conf.DbUser, conf.DbPassword, conf.DbAddress)
+	//dsn := "user=grapestree password=suoshu dbname=grapestree host=127.0.0.1 port=5433 sslmode=disable"
 	log.Info("database dsn : ", dsn)
 	err := orm.RegisterDataBase("default", "mysql", dsn, 10, 10)
 	if err != nil {

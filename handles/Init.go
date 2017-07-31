@@ -24,7 +24,6 @@ func Init(port string) {
 			loginRoute.POST("/register", HandleRegisterPost)
 		}
 		rootRouter.POST("/logout", HandleLogoutGet)
-
 		rootRouter.GET("/intro", HandleIntro)
 		rootRouter.GET("/about", HandleAbout)
 	}

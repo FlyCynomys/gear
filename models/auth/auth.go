@@ -3,7 +3,7 @@ package auth
 import (
 	"time"
 
-	ErrCode "github.com/FlyCynomys/error"
+	ErrCode "github.com/FlyCynomys/errors"
 	Err "github.com/FlyCynomys/tools/err"
 	"github.com/FlyCynomys/tools/randomstring"
 	"github.com/FlyCynomys/tools/uuid"
